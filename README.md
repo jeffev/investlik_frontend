@@ -1,70 +1,52 @@
-# Getting Started with Create React App
+**InvestLink Frontend**
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Welcome to the frontend repository of InvestLink, a stock management application. This frontend is built using [React](https://reactjs.org/) and [Redux](https://redux.js.org/) for state management.
 
-## Available Scripts
+### Setup
 
-In the project directory, you can run:
+1. **Clone the repository:**
+   ```sh
+   git clone https://github.com/jeffev/investlik_frontend
+   cd investlink-frontend
+   ```
 
-### `npm start`
+2. **Install dependencies:**
+   ```sh
+   npm install
+   ```
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+3. **Run the development server:**
+   ```sh
+   npm start
+   ```
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+4. **Build the project for production:**
+   ```sh
+   npm run build
+   ```
 
-### `npm test`
+### Environment Variables
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+The following environment variables are used in the project:
 
-### `npm run build`
+- **REACT_APP_API_BASE_URL:** The base URL of the backend API.
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+Create a `.env` file in the root of the project and add the following:
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+   ```
+   REACT_APP_API_BASE_URL=http://localhost:5000/api
+   ```
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+### Folder Structure
 
-### `npm run eject`
+The project structure is as follows:
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+- **`public/`:** Contains the public assets of the application.
+- **`src/`:** Contains the source code of the application.
+   - **`assets/`:** Contains static assets like images, fonts, etc.
+   - **`components/`:** Contains React components.
+   - **`pages/`:** Contains the main pages of the application.
+   - **`redux/`:** Contains Redux actions, reducers, and store configuration.
+   - **`services/`:** Contains API service functions.
+   - **`utils/`:** Contains utility functions.
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
