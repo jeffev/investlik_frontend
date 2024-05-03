@@ -1,9 +1,10 @@
 import { Routes, Route } from "react-router-dom";
-import Home from "./Home";
-import Register from "./Register";
+import Home from "../pages/Home.js";
+import Register from "../pages/Register.js";
 import {Outlet, Navigate} from 'react-router-dom';
 import authService from "../services/auth.service";
-import Login from "./Login.js";
+import Login from "../pages/Login.js";
+import ListaAcoes from "../pages/ListaAcoes.js";
 
 export const PrivateRoute = () => {
     const isAuthenticated = authService.isAuthenticated();
@@ -20,7 +21,7 @@ function Rotas() {
             <Route path='/' element={<PrivateRoute/>}>
                 <Route exact path="/" Component={Home} />
                 <Route path="/home" Component={Home} />
-                
+                <Route path="/listaAcoes" Component={ListaAcoes} />
             </Route>
         </Routes>
     );

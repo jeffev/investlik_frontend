@@ -45,7 +45,7 @@ class AuthService {
 
   getToken() {
     const user = JSON.parse(sessionStorage.getItem("user"));
-    return user ? user.token : null;
+    return user ? user.access_token : null;
   }
 
   isAuthenticated() {

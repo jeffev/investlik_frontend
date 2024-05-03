@@ -1,8 +1,8 @@
-**InvestLink Frontend**
+# InvestLink Frontend
 
 Welcome to the frontend repository of InvestLink, a stock management application. This frontend is built using [React](https://reactjs.org/) and [Redux](https://redux.js.org/) for state management.
 
-### Setup
+## Setup
 
 1. **Clone the repository:**
    ```sh
