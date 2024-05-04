@@ -79,9 +79,9 @@ function ListaAcoes() {
 
     try {
       if (favorita) {
-        await StockService.removerFavorita(ticker);
+        await StockService.removeFavorite(ticker);
       } else {
-        await StockService.adicionarFavorita(ticker);
+        await StockService.addFavorite(ticker);
       }
 
       setLista(prevLista =>
