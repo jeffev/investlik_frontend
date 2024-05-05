@@ -42,8 +42,8 @@ const columns = [
             cell.getValue() < 0
               ? theme.palette.success.light
               : cell.getValue() >= 0 && cell.getValue() < 30
-              ? theme.palette.warning.light
-              : theme.palette.error.light,
+                ? theme.palette.warning.light
+                : theme.palette.error.light,
           borderRadius: "0.25rem",
           color: "#fff",
           maxWidth: "9ch",
@@ -57,12 +57,12 @@ const columns = [
 ];
 
 const csvConfig = mkConfig({
-    fieldSeparator: ";",
-    quoteStrings: '"',
-    decimalSeparator: ",",
-    showLabels: true,
-    useBom: true,
-    useKeysAsHeaders: true,
+  fieldSeparator: ";",
+  quoteStrings: '"',
+  decimalSeparator: ",",
+  showLabels: true,
+  useBom: true,
+  useKeysAsHeaders: true,
 });
 
 function ListaAcoes() {
@@ -93,7 +93,7 @@ function ListaAcoes() {
       setLoading(false);
     } catch (error) {
       console.log(error);
-      
+
       setLoading(false);
     }
   };
@@ -133,7 +133,7 @@ function ListaAcoes() {
           <Box sx={{ display: "flex", flexWrap: "nowrap", gap: "8px" }}>
             <IconButton
               color="secondary"
-              
+
               onClick={() => {
                 handleFavoritar(row.original.favorita, row.original.ticker);
               }}

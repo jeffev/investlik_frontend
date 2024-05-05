@@ -53,14 +53,14 @@ const StockService = {
     }
   },
 
-  async removeFavorite(stockId) {
+  async removeFavorite(stock_ticker) {
     const token = AuthService.getToken();
     if (!token) {
       throw new Error("Token not found");
     }
 
     try {
-      const response = await axios.delete(`${API_URL}favorites/${stockId}`, {
+      const response = await axios.delete(`${API_URL}favorites/${stock_ticker}`, {
         headers: {
           Authorization: `Bearer ${token}`
         }
@@ -70,7 +70,47 @@ const StockService = {
       console.error("Error removing favorite:", error);
       throw error;
     }
+  },
+
+  async getFavorites() {
+    const token = AuthService.getToken();
+    if (!token) {
+      throw new Error("Token not found");
+    }
+
+    try {
+      const response = await axios.get(`${API_URL}favorites`, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching favorites:", error);
+      throw error;
+    }
+  },
+
+  async editFavorite(favoriteId, newData) {
+    const token = AuthService.getToken();
+    if (!token) {
+      throw new Error("Token not found");
+    }
+  
+    try {
+      const response = await axios.put(`${API_URL}favorite/${favoriteId}`, newData, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+      return response.data;
+    } catch (error) {
+      console.error("Error editing favorite:", error);
+      throw error;
+    }
   }
+  
+
 };
 
 export default StockService;

@@ -5,6 +5,7 @@ import {Outlet, Navigate} from 'react-router-dom';
 import authService from "../services/auth.service";
 import Login from "../pages/Login.js";
 import ListaAcoes from "../pages/ListaAcoes.js";
+import Favoritas from "../pages/Favoritas.js";
 
 export const PrivateRoute = () => {
     const isAuthenticated = authService.isAuthenticated();
@@ -22,6 +23,7 @@ function Rotas() {
                 <Route exact path="/" Component={Home} />
                 <Route path="/home" Component={Home} />
                 <Route path="/listaAcoes" Component={ListaAcoes} />
+                <Route path="/favoritas" Component={Favoritas} />
             </Route>
         </Routes>
     );
