@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_URL = "http://localhost:5000/";
+const API_URL = "http://investlink-backend-1:5000/";
 
 class AuthService {
   async login(user_name, password) {

@@ -1,7 +1,7 @@
 import { Routes, Route } from "react-router-dom";
 import Home from "../pages/Home.js";
 import Register from "../pages/Register.js";
-import {Outlet, Navigate} from 'react-router-dom';
+import { Outlet, Navigate } from 'react-router-dom';
 import authService from "../services/auth.service";
 import Login from "../pages/Login.js";
 import ListaAcoes from "../pages/ListaAcoes.js";
@@ -16,14 +16,14 @@ export const PrivateRoute = () => {
 function Rotas() {
     return (
         <Routes>
-            <Route path="/login" Component={Login} />
-            <Route path="/registrar" Component={Register} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/registrar" element={<Register />} />
 
-            <Route path='/' element={<PrivateRoute/>}>
-                <Route exact path="/" Component={Home} />
-                <Route path="/home" Component={Home} />
-                <Route path="/listaAcoes" Component={ListaAcoes} />
-                <Route path="/favoritas" Component={Favoritas} />
+            <Route path='/' element={<PrivateRoute />}>
+                <Route index element={<Home />} />
+                <Route path="/home" element={<Home />} />
+                <Route path="/listaAcoes" element={<ListaAcoes />} />
+                <Route path="/favoritas" element={<Favoritas />} />
             </Route>
         </Routes>
     );

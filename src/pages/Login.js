@@ -38,8 +38,8 @@ export default function Login() {
         setError("Usuário ou senha inválidos");
         setLoading(false);
       }
-    } catch (error) {
-      console.log(error);
+    } catch (e) {
+      console.log(e);
       setError("Error!!!");
       setLoading(false);
     }

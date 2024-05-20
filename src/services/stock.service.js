@@ -2,7 +2,7 @@ import axios from "axios";
 
 import AuthService from "./auth.service";
 
-const API_URL = "http://localhost:5000/";
+const API_URL = "http://investlink-backend-1:5000/";
 
 const StockService = {
   async getAllStocks() {
