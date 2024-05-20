@@ -1,4 +1,5 @@
 import axios from "axios";
+const { default: jwt_decode } = require("jwt-decode");
 
 const API_URL = "http://investlink-backend-1:5000/";
 
@@ -7,8 +8,8 @@ class AuthService {
     try {
       const response = await axios.post(API_URL + "user/login", { user_name, password });
       if (response.status === 200) {
-        const user = response.data;
-        sessionStorage.setItem("user", JSON.stringify(user));
+        const { access_token, profile, name, user_name } = response.data;
+        sessionStorage.setItem("user", JSON.stringify({ profile, name, user_name, access_token }));
       }
       return response;
     } catch (error) {
@@ -24,18 +25,18 @@ class AuthService {
     try {
       const response = await axios.post(API_URL + "users", userData);
       if (response.status === 201) {
-        const user = response.data;
-        sessionStorage.setItem("user", JSON.stringify(user));
+        const { access_token, profile, name, user_name } = response.data;
+        sessionStorage.setItem("user", JSON.stringify({ profile, name, user_name, access_token }));
       }
       return response;
     } catch (error) {
       return error.response;
     }
-  }
+  }  
 
   getCurrentUser() {
     const user = JSON.parse(sessionStorage.getItem("user"));
-    return user ? user.name : null;
+    return user ? user.profile : null;
   }
 
   getCurrentUsername() {
@@ -50,6 +51,11 @@ class AuthService {
 
   isAuthenticated() {
     return sessionStorage.getItem("user") ? true : false;
+  }
+
+  isAdmin() {
+    const user = JSON.parse(sessionStorage.getItem("user"));
+    return user && user.profile === "ADMIN";
   }
 }
 

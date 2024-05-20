@@ -108,8 +108,26 @@ const StockService = {
       console.error("Error editing favorite:", error);
       throw error;
     }
-  }
+  },
   
+  async updateStocks() {
+    const token = AuthService.getToken();
+    if (!token) {
+      throw new Error("Token not found");
+    }
+  
+    try {
+      const response = await axios.put(`${API_URL}stocks/update-stocks`, null, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+      return response.data;
+    } catch (error) {
+      console.error("Error updating stocks:", error);
+      throw error;
+    }
+  }
 
 };
 

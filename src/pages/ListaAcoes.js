@@ -8,6 +8,7 @@ import Download from "@mui/icons-material/Download";
 import { mkConfig, generateCsv, download } from 'export-to-csv';
 import { darken } from "@mui/material";
 import StockService from "../services/stock.service";
+import AuthService from "../services/auth.service";
 
 const columns = [
   { id: "ticker", accessorKey: "ticker", header: "Ticker", size: 120 },
@@ -68,6 +69,7 @@ const csvConfig = mkConfig({
 function ListaAcoes() {
   const [lista, setLista] = useState([]);
   const [loading, setLoading] = React.useState(false);
+  const isAdmin = AuthService.isAdmin();
 
   const handleExportData = () => {
     const csv = generateCsv(csvConfig)(lista);
@@ -94,6 +96,21 @@ function ListaAcoes() {
     } catch (error) {
       console.log(error);
 
+      setLoading(false);
+    }
+  };
+
+  const handleUpdateStocks = async () => {
+    setLoading(true);
+
+    try {
+      await StockService.updateStocks();
+      setLoading(false);
+      
+      const updatedStocks = await StockService.getAllStocks();
+      setLista(updatedStocks);
+    } catch (error) {
+      console.error("Error updating stocks:", error);
       setLoading(false);
     }
   };
@@ -155,6 +172,15 @@ function ListaAcoes() {
             >
               Exportar
             </Button>
+            {isAdmin && (
+              <Button
+                color="secondary"
+                onClick={handleUpdateStocks}
+                variant="contained"
+              >
+                Atualizar Ações
+              </Button>
+            )}
           </Box>
         )}
         muiTablePaperProps={{
