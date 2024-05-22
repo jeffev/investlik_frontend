@@ -1,14 +1,16 @@
 import React, { useState, useEffect } from "react";
-import { MaterialReactTable } from "material-react-table";
+import { MaterialReactTable, useMaterialReactTable } from "material-react-table";
 import { Backdrop, Box, Button, CircularProgress, IconButton, Tooltip } from "@mui/material";
 import { MRT_Localization_PT_BR } from "material-react-table/locales/pt-BR";
 import Star from "@mui/icons-material/Star";
 import StarBorder from "@mui/icons-material/StarBorder";
 import Download from "@mui/icons-material/Download";
+import Save from "@mui/icons-material/Save";
 import { mkConfig, generateCsv, download } from 'export-to-csv';
 import { darken } from "@mui/material";
 import StockService from "../services/stock.service";
 import AuthService from "../services/auth.service";
+import UserLayoutService from "../services/userLayout.service";
 
 const columns = [
   { id: "ticker", accessorKey: "ticker", header: "Ticker", size: 120 },
@@ -55,6 +57,19 @@ const columns = [
       </Box>
     ),
   },
+];
+
+const defaultColumnState = [
+  { id: "ticker", width: 120, sort: "asc" },
+  { accessorKey: "price", width: 120 },
+  { accessorKey: "roe", width: 120 },
+  { accessorKey: "dy", width: 100 },
+  { accessorKey: "p_vp", width: 120 },
+  { accessorKey: "vpa", width: 120 },
+  { accessorKey: "lpa", width: 120 },
+  { accessorKey: "p_l", width: 120 },
+  { accessorKey: "graham_formula", width: 150 },
+  { accessorKey: "discount_to_graham", width: 130 }
 ];
 
 const csvConfig = mkConfig({
@@ -115,18 +130,129 @@ function ListaAcoes() {
     }
   };
 
-  useEffect(() => {
+  const handleSaveLayout = async (state) => {
     setLoading(true);
-    StockService.getAllStocks()
-      .then((data) => {
+
+    try {
+      await UserLayoutService.saveLayout("ListaAcoes", state);
+      
+      setLoading(false);
+    } catch (error) {
+      console.error('Erro ao salvar o layout:', error);
+      setLoading(false);
+    }
+  };
+
+  const saveColumnStateToSessionStorage = () => {
+    let state = table.getState();
+
+    console.log(state)
+
+    const tableState = {};
+
+    if (Object.keys(state.columnVisibility).length > 0) {
+      tableState.columnVisibility = state.columnVisibility;
+    }
+    if (Object.keys(state.columnSizing).length > 0) {
+      tableState.columnSizing = state.columnSizing;
+    }
+    if (state.pagination !== undefined && state.pagination !== null) {
+      tableState.pagination = state.pagination;
+    }
+    if (state.density !== undefined && state.density !== null) {
+      tableState.density = state.density;
+    }
+
+    if (Object.keys(tableState).length > 0) {
+      sessionStorage.setItem('stateListaAcoes', JSON.stringify(tableState));
+      handleSaveLayout(JSON.stringify(tableState));
+    }
+  };
+
+  const table = useMaterialReactTable({
+    columns,
+    data: lista,
+    enableColumnFilterModes: true,
+    enableColumnOrdering: true,
+    enableColumnResizing: true,
+    enableRowActions: true,
+    layoutMode: 'grid',
+    initialState: JSON.parse(sessionStorage.getItem('stateListaAcoes')) || { density: 'compact', pagination: { pageSize: 15 } , defaultColumnState },
+    renderRowActions:({ row }) => (
+      <Box sx={{ display: "flex", flexWrap: "nowrap", gap: "8px" }}>
+        <IconButton
+          color="secondary"
+
+          onClick={() => {
+            handleFavoritar(row.original.favorita, row.original.ticker);
+          }}
+        >
+          {row.original.favorita ? <Tooltip title="Remover favorita"><Star /></Tooltip> : <Tooltip title="Adicionar favorita"><StarBorder /></Tooltip>}
+        </IconButton>
+      </Box>
+    ),
+    localization:MRT_Localization_PT_BR,
+    renderTopToolbarCustomActions:() => (
+      <Box
+        sx={{ display: "flex", gap: "1rem", p: "0.5rem", flexWrap: "wrap" }}
+      >
+        <Button
+          color="primary"
+          onClick={handleExportData}
+          startIcon={<Download />}
+          variant="contained"
+        >
+          Exportar
+        </Button>
+        <Button
+          color="primary"
+          onClick={saveColumnStateToSessionStorage}
+          startIcon={<Save />}
+          variant="contained"
+        >
+          Salvar layout
+        </Button>
+        {isAdmin && (
+          <Button
+            color="secondary"
+            onClick={handleUpdateStocks}
+            variant="contained"
+          >
+            Atualizar Ações
+          </Button>
+        )}
+      </Box>
+    ),
+    muiTablePaperProps:{
+      elevation: 0,
+      sx: {
+        borderRadius: "0",
+      },
+    },
+    muiTableBodyProps:{
+      sx: (theme) => ({
+        "& tr:nth-of-type(odd)": {
+          backgroundColor: darken(theme.palette.background.default, 0.1),
+        },
+      }),
+    },
+  });
+
+  useEffect(() => {
+    const fetchData = async () => {
+      setLoading(true);
+      try {
+        const data = await StockService.getAllStocks();
         setLista(data);
+
         setLoading(false);
-      })
-      .catch((error) => {
+      } catch (error) {
         console.log(error);
         setLoading(false);
-      });
+      }
+    };
 
+    fetchData();
   }, []);
 
   return (
@@ -138,65 +264,8 @@ function ListaAcoes() {
         <CircularProgress color="secondary" />
       </Backdrop>
 
-      <MaterialReactTable
-        data={lista}
-        columns={columns}
-        enableColumnFilterModes
-        enableColumnOrdering
-        enableColumnResizing
-        enableRowActions
-        initialState={{ density: 'compact', pagination: { pageSize: 15 } }}
-        renderRowActions={({ row }) => (
-          <Box sx={{ display: "flex", flexWrap: "nowrap", gap: "8px" }}>
-            <IconButton
-              color="secondary"
+      <MaterialReactTable table={table} />
 
-              onClick={() => {
-                handleFavoritar(row.original.favorita, row.original.ticker);
-              }}
-            >
-              {row.original.favorita ? <Tooltip title="Remover favorita"><Star /></Tooltip> : <Tooltip title="Adicionar favorita"><StarBorder /></Tooltip>}
-            </IconButton>
-          </Box>
-        )}
-        localization={MRT_Localization_PT_BR}
-        renderTopToolbarCustomActions={({ table }) => (
-          <Box
-            sx={{ display: "flex", gap: "1rem", p: "0.5rem", flexWrap: "wrap" }}
-          >
-            <Button
-              color="primary"
-              onClick={handleExportData}
-              startIcon={<Download />}
-              variant="contained"
-            >
-              Exportar
-            </Button>
-            {isAdmin && (
-              <Button
-                color="secondary"
-                onClick={handleUpdateStocks}
-                variant="contained"
-              >
-                Atualizar Ações
-              </Button>
-            )}
-          </Box>
-        )}
-        muiTablePaperProps={{
-          elevation: 0,
-          sx: {
-            borderRadius: "0",
-          },
-        }}
-        muiTableBodyProps={{
-          sx: (theme) => ({
-            "& tr:nth-of-type(odd)": {
-              backgroundColor: darken(theme.palette.background.default, 0.1),
-            },
-          }),
-        }}
-      />
     </div>
   );
 }

@@ -1,7 +1,8 @@
 import axios from "axios";
-const { default: jwt_decode } = require("jwt-decode");
 
-const API_URL = "http://investlink-backend-1:5000/";
+import UserLayoutService from "./userLayout.service";
+
+const API_URL = "http://investlink-backend-1:5000/v1/";
 
 class AuthService {
   async login(user_name, password) {
@@ -10,7 +11,20 @@ class AuthService {
       if (response.status === 200) {
         const { access_token, profile, name, user_name } = response.data;
         sessionStorage.setItem("user", JSON.stringify({ profile, name, user_name, access_token }));
+
+        try {
+          // Carregar o layout após o login
+          const layout = await UserLayoutService.getLayout("ListaAcoes");
+          if (layout) {
+            sessionStorage.setItem('stateListaAcoes', layout);
+          } else {
+            sessionStorage.removeItem('stateListaAcoes');
+          }
+        } catch (error) {
+          sessionStorage.removeItem('stateListaAcoes');
+        }
       }
+
       return response;
     } catch (error) {
       return error.response;
@@ -59,4 +73,6 @@ class AuthService {
   }
 }
 
-export default new AuthService();
+const authServiceInstance = new AuthService();
+
+export default authServiceInstance;

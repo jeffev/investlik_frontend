@@ -2,7 +2,7 @@ import axios from "axios";
 
 import AuthService from "./auth.service";
 
-const API_URL = "http://investlink-backend-1:5000/";
+const API_URL = "http://investlink-backend-1:5000/v1/";
 
 const StockService = {
   async getAllStocks() {
@@ -127,7 +127,7 @@ const StockService = {
       console.error("Error updating stocks:", error);
       throw error;
     }
-  }
+  },
 
 };
 
