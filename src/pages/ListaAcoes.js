@@ -169,12 +169,13 @@ function ListaAcoes() {
   const saveColumnStateToSessionStorage = () => {
     let state = table.getState();
 
-    console.log(state)
-
     const tableState = {};
 
     if (Object.keys(state.columnVisibility).length > 0) {
       tableState.columnVisibility = state.columnVisibility;
+    }
+    if (Object.keys(state.columnOrder).length > 0) {
+      tableState.columnOrder = state.columnOrder;
     }
     if (Object.keys(state.columnSizing).length > 0) {
       tableState.columnSizing = state.columnSizing;
@@ -196,7 +197,7 @@ function ListaAcoes() {
     columns,
     data: lista,
     enableColumnFilterModes: true,
-    enableColumnOrdering: false,
+    enableColumnOrdering: true,
     enableColumnResizing: true,
     enableRowActions: true,
     columnFilterDisplayMode: 'popover',
