@@ -1,134 +1,66 @@
 import axios from "axios";
-
 import AuthService from "./auth.service";
 
 const API_URL = "http://investlink-backend-1:5000/v1/";
 
-const StockService = {
-  async getAllStocks() {
+class StockService {
+  constructor() {
+    this.apiUrl = API_URL;
+  }
+
+  async request(method, endpoint, data = null) {
     const token = AuthService.getToken();
     if (!token) {
       throw new Error("Token not found");
     }
-  
+
     try {
-      let response = await axios.get(`${API_URL}stocks`, {
+      const response = await axios({
+        method,
+        url: `${this.apiUrl}${endpoint}`,
         headers: {
-          Authorization: `Bearer ${token}`
-        }
+          Authorization: `Bearer ${token}`,
+        },
+        data,
       });
-  
-      let favoritas = response.data.filter(item => item.favorita);
-      let naoFavoritas = response.data.filter(item => !item.favorita);
-  
-      favoritas.sort((a, b) => a.ticker.localeCompare(b.ticker));
-      
-      naoFavoritas.sort((a, b) => a.ticker.localeCompare(b.ticker));
-  
-      let orderedList = favoritas.concat(naoFavoritas);
-  
-      return orderedList;
+      return response.data;
     } catch (error) {
-      console.error("Error fetching stocks:", error);
+      console.error(`Error with ${method.toUpperCase()} request to ${endpoint}:`, error);
       throw error;
     }
-  }, 
+  }
+
+  async getAllStocks() {
+    const stocks = await this.request("get", "stocks");
+
+    const favoritas = stocks.filter(item => item.favorita);
+    const naoFavoritas = stocks.filter(item => !item.favorita);
+
+    favoritas.sort((a, b) => a.ticker.localeCompare(b.ticker));
+    naoFavoritas.sort((a, b) => a.ticker.localeCompare(b.ticker));
+
+    return [...favoritas, ...naoFavoritas];
+  }
 
   async addFavorite(stockId) {
-    const token = AuthService.getToken();
-    if (!token) {
-      throw new Error("Token not found");
-    }
+    return this.request("post", `favorites/${stockId}`);
+  }
 
-    try {
-      const response = await axios.post(`${API_URL}favorites/${stockId}`, null, {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      });
-      return response.data;
-    } catch (error) {
-      console.error("Error adding favorite:", error);
-      throw error;
-    }
-  },
-
-  async removeFavorite(stock_ticker) {
-    const token = AuthService.getToken();
-    if (!token) {
-      throw new Error("Token not found");
-    }
-
-    try {
-      const response = await axios.delete(`${API_URL}favorites/${stock_ticker}`, {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      });
-      return response.data;
-    } catch (error) {
-      console.error("Error removing favorite:", error);
-      throw error;
-    }
-  },
+  async removeFavorite(stockTicker) {
+    return this.request("delete", `favorites/${stockTicker}`);
+  }
 
   async getFavorites() {
-    const token = AuthService.getToken();
-    if (!token) {
-      throw new Error("Token not found");
-    }
-
-    try {
-      const response = await axios.get(`${API_URL}favorites`, {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      });
-      return response.data;
-    } catch (error) {
-      console.error("Error fetching favorites:", error);
-      throw error;
-    }
-  },
+    return this.request("get", "favorites");
+  }
 
   async editFavorite(favoriteId, newData) {
-    const token = AuthService.getToken();
-    if (!token) {
-      throw new Error("Token not found");
-    }
-  
-    try {
-      const response = await axios.put(`${API_URL}favorite/${favoriteId}`, newData, {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      });
-      return response.data;
-    } catch (error) {
-      console.error("Error editing favorite:", error);
-      throw error;
-    }
-  },
-  
+    return this.request("put", `favorite/${favoriteId}`, newData);
+  }
+
   async updateStocks() {
-    const token = AuthService.getToken();
-    if (!token) {
-      throw new Error("Token not found");
-    }
-  
-    try {
-      const response = await axios.put(`${API_URL}stocks/update-stocks`, null, {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      });
-      return response.data;
-    } catch (error) {
-      console.error("Error updating stocks:", error);
-      throw error;
-    }
-  },
+    return this.request("put", "stocks/update-stocks");
+  }
+}
 
-};
-
-export default StockService;
+export default new StockService();
