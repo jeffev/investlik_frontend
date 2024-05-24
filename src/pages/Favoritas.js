@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect } from "react";
 import { MaterialReactTable, useMaterialReactTable } from "material-react-table";
-import { Box, Button, Snackbar, TextField, Typography, IconButton, Tooltip } from "@mui/material";
+import { Button, Snackbar, Typography, IconButton, Tooltip } from "@mui/material";
 import { MRT_Localization_PT_BR } from "material-react-table/locales/pt-BR";
 import DeleteIcon from "@mui/icons-material/Delete";
 import Save from "@mui/icons-material/Save";
@@ -24,19 +24,23 @@ const Favoritas = () => {
     };
 
     const handleEditFavorite = async (newRow) => {
-        console.log(newRow)
         try {
-            await StockService.editFavorite(newRow.row.original.id, newRow.row);
-            const updatedFavoritas = favoritas.map((fav) =>
-                fav.id === newRow.original.id ? newRow.row : fav
-            );
-            setFavoritas(updatedFavoritas);
+            await StockService.editFavorite(newRow.row.original.id, newRow.row._valuesCache);
+            
+            const index = favoritas.findIndex((fav) => fav.id === newRow.row.original.id);
+            if (index >= 0) {
+                const updatedFavoritas = [...favoritas];
+                updatedFavoritas[index] = newRow.row._valuesCache;
+                setFavoritas(updatedFavoritas);
+            }
+            
+            table.setEditingRow(null);
             setSnackbar({ children: 'Favorita editada com sucesso!', severity: 'success' });
         } catch (error) {
             setSnackbar({ children: 'Erro ao editar favorita!', severity: 'error' });
         }
     };
-
+    
     useEffect(() => {
         const fetchData = async () => {
             try {
@@ -50,25 +54,28 @@ const Favoritas = () => {
     }, []);
 
     const columns = [
-        { accessorKey: "id", header: "ID", size: 80, enableEditing: false },
+        { accessorKey: "id", header: "ID", size: 80, enableEditing: false, Edit: () => null, enableHiding: false },
         { accessorKey: "stock_ticker", header: "Ticker", size: 80, enableEditing: false },
         {
             accessorKey: "ceiling_price",
             header: "Preço Teto",
             size: 100,
-            enableEditing: true
+            enableEditing: true,
+            filterVariant: 'range'
         },
         {
             accessorKey: "target_price",
             header: "Preço Alvo",
             size: 100,
-            enableEditing: true
+            enableEditing: true,
+            filterVariant: 'range'
         },
         {
             accessorKey: "remove",
             header: "Remover",
             size: 120,
             enableEditing: false,
+            Edit: () => null,
             Cell: ({ row }) => (
                 <IconButton
                     color="secondary"
@@ -86,6 +93,17 @@ const Favoritas = () => {
         columns,
         data: favoritas,
         enableEditing: true,
+        enableColumnFilterModes: true,
+        enableColumnOrdering: true,
+        enableColumnResizing: true,
+        columnFilterDisplayMode: 'popover',
+        layoutMode: 'grid',
+        displayColumnDefOptions:{
+                'mrt-row-actions': {
+                size: 40,
+                grow: false,
+            },
+        },
         editDisplayMode:'modal',
         localization: MRT_Localization_PT_BR,
         onEditingRowCancel: () => setValidationErrors({}),
@@ -93,6 +111,7 @@ const Favoritas = () => {
         initialState: {
             pagination: { pageSize: 5 },
             density: 'compact',
+            columnVisibility: { id: false } 
         },
         renderTopToolbarCustomActions: () => (
             <Button
@@ -105,14 +124,7 @@ const Favoritas = () => {
             >
                 Salvar Layout
             </Button>
-        ),
-        muiTableBodyCellProps: ({ cell }) => ({
-            onClick: (event) => {
-                if (cell.column.id === 'ceiling_price' || cell.column.id === 'target_price') {
-                    event.stopPropagation();
-                }
-            },
-        }),
+        )
     });
 
     return (
