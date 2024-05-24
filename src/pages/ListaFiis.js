@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { MaterialReactTable, useMaterialReactTable } from "material-react-table";
-import { Backdrop, Box, Button, CircularProgress, IconButton, Tooltip } from "@mui/material";
+import { Backdrop, Box, Button, CircularProgress, IconButton, Tooltip, Snackbar } from "@mui/material";
 import { MRT_Localization_PT_BR } from "material-react-table/locales/pt-BR";
 import Star from "@mui/icons-material/Star";
 import StarBorder from "@mui/icons-material/StarBorder";
 import Download from "@mui/icons-material/Download";
 import Save from "@mui/icons-material/Save";
+import Alert from '@mui/material/Alert';
 import { mkConfig, generateCsv, download } from 'export-to-csv';
 import { darken } from "@mui/material";
 import FIIService from "../services/fii.service";
@@ -71,6 +72,8 @@ const csvConfig = mkConfig({
 function ListaFIIs() {
   const [lista, setLista] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [snackbar, setSnackbar] = useState(null);
+  const handleCloseSnackbar = () => setSnackbar(null);
   const isAdmin = AuthService.isAdmin();
 
   const handleExportData = () => {
@@ -95,10 +98,12 @@ function ListaFIIs() {
       );
 
       setLoading(false);
+      setSnackbar({ children: 'Favorita removida/adicionada com sucesso!', severity: 'success' });
     } catch (error) {
       console.log(error);
 
       setLoading(false);
+      setSnackbar({ children: 'Erro ao remover/adicionar favorita!', severity: 'error' });
     }
   };
 
@@ -111,9 +116,11 @@ function ListaFIIs() {
       
       const updatedFIIs = await FIIService.getAllFIIs();
       setLista(updatedFIIs);
+      setSnackbar({ children: 'Fiis atualizados com sucesso!', severity: 'success' });
     } catch (error) {
       console.error("Error updating FIIs:", error);
       setLoading(false);
+      setSnackbar({ children: 'Erro ao atualizar os Fiss!', severity: 'error' });
     }
   };
 
@@ -124,9 +131,11 @@ function ListaFIIs() {
       await UserLayoutService.saveLayout("ListaFiis", state);
       
       setLoading(false);
+      setSnackbar({ children: 'Layout salvo com sucesso!', severity: 'success' });
     } catch (error) {
       console.error('Erro ao salvar o layout:', error);
       setLoading(false);
+      setSnackbar({ children: 'Erro ao salvar layout!', severity: 'error' });
     }
   };
 
@@ -276,6 +285,17 @@ function ListaFIIs() {
         </Backdrop>
   
         <MaterialReactTable table={table} />
+
+        {!!snackbar && (
+            <Snackbar
+                open
+                anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+                onClose={handleCloseSnackbar}
+                autoHideDuration={6000}
+            >
+                <Alert {...snackbar} onClose={handleCloseSnackbar} />
+            </Snackbar>
+        )}
       </div>
     );
   }

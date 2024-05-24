@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { MaterialReactTable, useMaterialReactTable } from "material-react-table";
-import { Backdrop, Box, Button, CircularProgress, IconButton, Tooltip } from "@mui/material";
+import { Backdrop, Box, Button, CircularProgress, IconButton, Tooltip, Snackbar } from "@mui/material";
 import { MRT_Localization_PT_BR } from "material-react-table/locales/pt-BR";
 import Star from "@mui/icons-material/Star";
 import StarBorder from "@mui/icons-material/StarBorder";
 import Download from "@mui/icons-material/Download";
 import Save from "@mui/icons-material/Save";
+import Alert from '@mui/material/Alert';
 import { mkConfig, generateCsv, download } from 'export-to-csv';
 import { darken } from "@mui/material";
+
 import StockService from "../services/stock.service";
 import AuthService from "../services/auth.service";
 import UserLayoutService from "../services/userLayout.service";
@@ -107,6 +109,8 @@ const csvConfig = mkConfig({
 function ListaAcoes() {
   const [lista, setLista] = useState([]);
   const [loading, setLoading] = React.useState(false);
+  const [snackbar, setSnackbar] = useState(null);
+  const handleCloseSnackbar = () => setSnackbar(null);
   const isAdmin = AuthService.isAdmin();
 
   const handleExportData = () => {
@@ -131,10 +135,11 @@ function ListaAcoes() {
       );
 
       setLoading(false);
+      setSnackbar({ children: 'Favorita removida/adicionada com sucesso!', severity: 'success' });
     } catch (error) {
       console.log(error);
-
       setLoading(false);
+      setSnackbar({ children: 'Erro ao remover/adicionar favorita!', severity: 'error' });
     }
   };
 
@@ -147,9 +152,11 @@ function ListaAcoes() {
       
       const updatedStocks = await StockService.getAllStocks();
       setLista(updatedStocks);
+      setSnackbar({ children: 'Ações atualizadas com sucesso!', severity: 'success' });
     } catch (error) {
       console.error("Error updating stocks:", error);
       setLoading(false);
+      setSnackbar({ children: 'Erro ao atualizar as ações!', severity: 'error' });
     }
   };
 
@@ -160,9 +167,11 @@ function ListaAcoes() {
       await UserLayoutService.saveLayout("ListaAcoes", state);
       
       setLoading(false);
+      setSnackbar({ children: 'Layout salvo com sucesso!', severity: 'success' });
     } catch (error) {
       console.error('Erro ao salvar o layout:', error);
       setLoading(false);
+      setSnackbar({ children: 'Erro ao salvar layout!', severity: 'error' });
     }
   };
 
@@ -328,6 +337,17 @@ function ListaAcoes() {
       </Backdrop>
 
       <MaterialReactTable table={table} />
+
+      {!!snackbar && (
+        <Snackbar
+          open
+          anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+          onClose={handleCloseSnackbar}
+          autoHideDuration={6000}
+        >
+          <Alert {...snackbar} onClose={handleCloseSnackbar} />
+        </Snackbar>
+      )}
 
     </div>
   );

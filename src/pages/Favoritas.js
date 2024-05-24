@@ -1,40 +1,41 @@
-import React, { useState, useEffect } from "react";
-import { DataGrid } from "@mui/x-data-grid";
-import { TextField, Typography } from "@mui/material";
-import StockService from "../services/stock.service";
-import Snackbar from '@mui/material/Snackbar';
-import Alert from '@mui/material/Alert';
-import { IconButton } from "@mui/material";
+import React, { useState, useEffect, useCallback } from "react";
+import { MaterialReactTable, useMaterialReactTable } from "material-react-table";
+import { Box, Button, Snackbar, TextField, Typography, IconButton, Tooltip } from "@mui/material";
+import { MRT_Localization_PT_BR } from "material-react-table/locales/pt-BR";
 import DeleteIcon from "@mui/icons-material/Delete";
-
+import Save from "@mui/icons-material/Save";
+import StockService from "../services/stock.service";
+import Alert from '@mui/material/Alert';
 
 const Favoritas = () => {
     const [favoritas, setFavoritas] = useState([]);
-    const [snackbar, setSnackbar] = React.useState(null);
-
+    const [snackbar, setSnackbar] = useState(null);
     const handleCloseSnackbar = () => setSnackbar(null);
+    const [validationErrors, setValidationErrors] = useState({});
 
     const handleRemoveFavorite = async (stock_ticker) => {
-        await StockService.removeFavorite(stock_ticker);
-        setFavoritas(favoritas.filter((fav) => fav.stock_ticker !== stock_ticker));
+        try {
+            await StockService.removeFavorite(stock_ticker);
+            setFavoritas(favoritas.filter((fav) => fav.stock_ticker !== stock_ticker));
+            setSnackbar({ children: 'Favorita removida com sucesso!', severity: 'success' });
+        } catch (error) {
+            setSnackbar({ children: 'Erro ao remover favorita!', severity: 'error' });
+        }
     };
 
-    const handleEditFavorite = React.useCallback(
-        async (newRow) => {
-            await StockService.editFavorite(newRow.id, newRow);
+    const handleEditFavorite = async (newRow) => {
+        console.log(newRow)
+        try {
+            await StockService.editFavorite(newRow.row.original.id, newRow.row);
             const updatedFavoritas = favoritas.map((fav) =>
-                fav.id === newRow.id ? newRow : fav
+                fav.id === newRow.original.id ? newRow.row : fav
             );
             setFavoritas(updatedFavoritas);
             setSnackbar({ children: 'Favorita editada com sucesso!', severity: 'success' });
-            return { id: newRow.id };
-        },
-        []
-    );
-
-    const handleProcessRowUpdateError = React.useCallback((error) => {
-        setSnackbar({ children: error.message, severity: 'error' });
-    }, []);
+        } catch (error) {
+            setSnackbar({ children: 'Erro ao editar favorita!', severity: 'error' });
+        }
+    };
 
     useEffect(() => {
         const fetchData = async () => {
@@ -49,75 +50,77 @@ const Favoritas = () => {
     }, []);
 
     const columns = [
-        { field: "id", headerName: "ID", hide: true },
-        { field: "stock_ticker", headerName: "Ticker", width: 80 },
+        { accessorKey: "id", header: "ID", size: 80, enableEditing: false },
+        { accessorKey: "stock_ticker", header: "Ticker", size: 80, enableEditing: false },
         {
-            field: "ceiling_price",
-            headerName: "Preço Teto",
-            width: 100,
-            editable: true,
-            renderCell: (params) => (
-                <TextField
-                    type="number"
-                    variant="standard"
-                    size="small"
-                    value={params.value ? params.value.toFixed(2) : ""}
-                    InputProps={{
-                        inputProps: {
-                            step: 0.01,
-                        },
-                    }}
-                />
-            ),
+            accessorKey: "ceiling_price",
+            header: "Preço Teto",
+            size: 100,
+            enableEditing: true
         },
         {
-            field: "target_price",
-            headerName: "Preço Alvo",
-            width: 100,
-            editable: true,
-            renderCell: (params) => (
-                <TextField
-                    type="number"
-                    variant="standard"
-                    size="small"
-                    value={params.value ? params.value.toFixed(2) : ""}
-                    InputProps={{
-                        inputProps: {
-                            step: 0.01,
-                        },
-                    }}
-                />
-            ),
+            accessorKey: "target_price",
+            header: "Preço Alvo",
+            size: 100,
+            enableEditing: true
         },
         {
-            field: "remove",
-            headerName: "Remover",
-            width: 120,
-            renderCell: (params) => (
+            accessorKey: "remove",
+            header: "Remover",
+            size: 120,
+            enableEditing: false,
+            Cell: ({ row }) => (
                 <IconButton
                     color="secondary"
-                    onClick={() => handleRemoveFavorite(params.row.stock_ticker)}
+                    onClick={() => handleRemoveFavorite(row.original.stock_ticker)}
                 >
-                    <DeleteIcon />
+                    <Tooltip title="Remover favorita">
+                        <DeleteIcon />
+                    </Tooltip>
                 </IconButton>
             ),
         },
     ];
+
+    const table = useMaterialReactTable({
+        columns,
+        data: favoritas,
+        enableEditing: true,
+        editDisplayMode:'modal',
+        localization: MRT_Localization_PT_BR,
+        onEditingRowCancel: () => setValidationErrors({}),
+        onEditingRowSave: handleEditFavorite,    
+        initialState: {
+            pagination: { pageSize: 5 },
+            density: 'compact',
+        },
+        renderTopToolbarCustomActions: () => (
+            <Button
+                color="primary"
+                onClick={() => {
+                    // Save layout or other actions
+                }}
+                startIcon={<Save />}
+                variant="contained"
+            >
+                Salvar Layout
+            </Button>
+        ),
+        muiTableBodyCellProps: ({ cell }) => ({
+            onClick: (event) => {
+                if (cell.column.id === 'ceiling_price' || cell.column.id === 'target_price') {
+                    event.stopPropagation();
+                }
+            },
+        }),
+    });
 
     return (
         <div style={{ height: 400, width: "100%" }}>
             {favoritas.length === 0 ? (
                 <Typography variant="h6">Nenhuma ação favorita encontrada</Typography>
             ) : (
-                <DataGrid rows={favoritas}
-                    columns={columns}
-                    pageSize={5}
-                    processRowUpdate={handleEditFavorite}
-                    onProcessRowUpdateError={handleProcessRowUpdateError}
-                    columnVisibilityModel={{
-                        id: false,
-                    }}
-                />
+                <MaterialReactTable table={table} />
             )}
             {!!snackbar && (
                 <Snackbar
