@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { MaterialReactTable, useMaterialReactTable } from "material-react-table";
-import { Backdrop, CircularProgress, Box, Button } from "@mui/material";
+import { Backdrop, Box, Button, CircularProgress, IconButton, Tooltip } from "@mui/material";
 import { MRT_Localization_PT_BR } from "material-react-table/locales/pt-BR";
+import Star from "@mui/icons-material/Star";
+import StarBorder from "@mui/icons-material/StarBorder";
 import Download from "@mui/icons-material/Download";
 import Save from "@mui/icons-material/Save";
 import { mkConfig, generateCsv, download } from 'export-to-csv';
@@ -11,12 +13,23 @@ import AuthService from "../services/auth.service";
 import UserLayoutService from "../services/userLayout.service";
 
 const columns = [
-  { id: "ticker", accessorKey: "ticker", header: "Ticker", size: 120, filterVariant: 'autocomplete', enableColumnActions: false },
+  { id: "ticker", accessorKey: "ticker", header: "Ticker", size: 80, filterVariant: 'autocomplete', enableColumnActions: false },
   { accessorKey: "companyname", header: "Nome", size: 120, filterVariant: 'autocomplete', enableColumnActions: false },
   { accessorKey: "sectorname", header: "Setor", size: 120, filterVariant: 'autocomplete', enableColumnActions: false },
   { accessorKey: "subsectorname", header: "Subsetor", size: 120, filterVariant: 'autocomplete', enableColumnActions: false },
   { accessorKey: "segment", header: "Segmento", size: 120, filterVariant: 'autocomplete', enableColumnActions: false },
-  { accessorKey: "price", header: "Preço", size: 120, filterVariant: 'range', enableColumnActions: false },
+  {
+    accessorKey: "price",
+    header: "Preço",
+    size: 120,
+    filterVariant: 'range',
+    enableColumnActions: false,
+    Cell: ({ cell }) =>
+      cell.getValue()?.toLocaleString?.("pt-BR", {
+        style: "currency",
+        currency: "BRL"
+      }),
+  },
   { accessorKey: "dy", header: "DY", size: 120, filterVariant: 'range', enableColumnActions: false },
   { accessorKey: "p_vp", header: "P/VP", size: 120, filterVariant: 'range', enableColumnActions: false },
   { accessorKey: "valorpatrimonialcota", header: "Valor Patrimonial Cota", size: 180, filterVariant: 'range', enableColumnActions: false },
@@ -63,6 +76,30 @@ function ListaFIIs() {
   const handleExportData = () => {
     const csv = generateCsv(csvConfig)(lista);
     download(csvConfig)(csv);
+  };
+
+  const handleFavoritar = async (favorita, ticker) => {
+    setLoading(true);
+
+    try {
+      if (favorita) {
+        await FIIService.removeFavorite(ticker);
+      } else {
+        await FIIService.addFavorite(ticker);
+      }
+
+      setLista(prevLista =>
+        prevLista.map(item =>
+          item.ticker === ticker ? { ...item, favorita: !favorita } : item
+        )
+      );
+
+      setLoading(false);
+    } catch (error) {
+      console.log(error);
+
+      setLoading(false);
+    }
   };
 
   const handleUpdateFIIs = async () => {
@@ -126,17 +163,45 @@ function ListaFIIs() {
     enableColumnFilterModes: true,
     enableColumnOrdering: true,
     enableColumnResizing: true,
-    enableRowActions: false,
+    enableRowActions: true,
     columnFilterDisplayMode: 'popover',
     layoutMode: 'grid',
+    displayColumnDefOptions:{
+        'mrt-row-actions': {
+          size: 40,
+          grow: false,
+        },
+      },
     initialState: JSON.parse(sessionStorage.getItem('stateListaFiis')) || {
       density: 'compact',
       pagination: { 
           pageSize: 15 
       },
       defaultColumnState,
-      columnVisibility: {}      
-    },  
+      columnVisibility: {
+        sectorname: false,
+        subsectorname: false,
+        segment: false,
+        dividend_cagr: false,
+        cota_cagr: false,
+        numerocotistas: false,
+        numerocotas: false,
+        patrimonio: false
+      }      
+    },
+    renderRowActions:({ row }) => (
+        <Box sx={{ display: "flex", flexWrap: "nowrap", gap: "8px" }}>
+          <IconButton
+            color="secondary"
+  
+            onClick={() => {
+              handleFavoritar(row.original.favorita, row.original.ticker);
+            }}
+          >
+            {row.original.favorita ? <Tooltip title="Remover favorita"><Star /></Tooltip> : <Tooltip title="Adicionar favorita"><StarBorder /></Tooltip>}
+          </IconButton>
+        </Box>
+      ),
     localization: MRT_Localization_PT_BR,
     renderTopToolbarCustomActions: () => (
       <Box

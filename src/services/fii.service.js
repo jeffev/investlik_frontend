@@ -35,19 +35,19 @@ class FiiService {
   }
 
   async addFavorite(fiiId) {
-    return this.request("post", `favorites/${fiiId}`);
+    return this.request("post", `favorites/fii/${fiiId}`);
   }
 
   async removeFavorite(fiiTicker) {
-    return this.request("delete", `favorites/${fiiTicker}`);
+    return this.request("delete", `favorites/fii/${fiiTicker}`);
   }
 
   async getFavorites() {
-    return this.request("get", "favorites");
+    return this.request("get", "favorites/fii");
   }
 
   async editFavorite(favoriteId, newData) {
-    return this.request("put", `favorite/${favoriteId}`, newData);
+    return this.request("put", `favorite/fii/${favoriteId}`, newData);
   }
 
   async updateFIIs() {
