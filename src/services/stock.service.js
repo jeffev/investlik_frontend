@@ -63,4 +63,5 @@ class StockService {
   }
 }
 
-export default new StockService();
+const stockServiceInstance = new StockService();
+export default stockServiceInstance;

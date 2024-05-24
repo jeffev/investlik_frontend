@@ -3,7 +3,7 @@ import AuthService from "./auth.service";
 
 const API_URL = "http://investlink-backend-1:5000/v1/";
 
-class UserLayoutService {
+class FiiService {
   constructor() {
     this.apiUrl = API_URL;
   }
@@ -30,14 +30,30 @@ class UserLayoutService {
     }
   }
 
-  async saveLayout(layout, estado) {
-    return this.request("post", "user_layout", { layout, estado });
+  async getAllFIIs() {
+    return this.request("get", "fiis");
   }
 
-  async getLayout(layout) {
-    return this.request("get", `user_layout/${layout}`);
+  async addFavorite(fiiId) {
+    return this.request("post", `favorites/${fiiId}`);
+  }
+
+  async removeFavorite(fiiTicker) {
+    return this.request("delete", `favorites/${fiiTicker}`);
+  }
+
+  async getFavorites() {
+    return this.request("get", "favorites");
+  }
+
+  async editFavorite(favoriteId, newData) {
+    return this.request("put", `favorite/${favoriteId}`, newData);
+  }
+
+  async updateFIIs() {
+    return this.request("put", "fiis/update-fiis");
   }
 }
 
-const userLayoutServiceInstance = new UserLayoutService();
-export default userLayoutServiceInstance;
+const fiiServiceInstance = new FiiService();
+export default fiiServiceInstance;

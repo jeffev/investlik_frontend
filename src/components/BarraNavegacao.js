@@ -71,6 +71,10 @@ function BarraNavegacao({ check, change }) {
               <ListItemIcon><HomeOutlined /></ListItemIcon>
               <ListItemText primary="Lista de ações" />
             </ListItemButton>
+            <ListItemButton component={Link} to={"/listaFiis"}>
+              <ListItemIcon><HomeOutlined /></ListItemIcon>
+              <ListItemText primary="Lista de FIIs" />
+            </ListItemButton>
             <ListItemButton component={Link} to={"/top10"}>
               <ListItemIcon><HomeOutlined /></ListItemIcon>
               <ListItemText primary="Top 10" />

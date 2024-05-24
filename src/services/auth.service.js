@@ -24,6 +24,7 @@ class AuthService {
   logout() {
     sessionStorage.removeItem("user");
     sessionStorage.removeItem("stateListaAcoes");
+    sessionStorage.removeItem("stateListaFiis");
   }
 
   async register(userData) {
@@ -46,17 +47,29 @@ class AuthService {
 
   async loadUserLayout() {
     try {
-      const layout = await UserLayoutService.getLayout("ListaAcoes");
-      if (layout) {
-        sessionStorage.setItem('stateListaAcoes', layout);
-      } else {
-        sessionStorage.removeItem('stateListaAcoes');
-      }
+        const layoutAcoes = await UserLayoutService.getLayout("ListaAcoes");
+        if (layoutAcoes) {
+            sessionStorage.setItem('stateListaAcoes', layoutAcoes);
+        } else {
+            sessionStorage.removeItem('stateListaAcoes');
+        }
     } catch (error) {
-      console.error('Error loading user layout:', error);
-      sessionStorage.removeItem('stateListaAcoes');
+        console.error('Error loading user layout for ListaAcoes:', error);
+        sessionStorage.removeItem('stateListaAcoes');
     }
-  }
+
+    try {
+        const layoutFiis = await UserLayoutService.getLayout("ListaFiis");
+        if (layoutFiis) {
+            sessionStorage.setItem('stateListaFiis', layoutFiis);
+        } else {
+            sessionStorage.removeItem('stateListaFiis');
+        }
+    } catch (error) {
+        console.error('Error loading user layout for ListaFiis:', error);
+        sessionStorage.removeItem('stateListaFiis');
+    }
+}
 
   getCurrentUser() {
     const user = JSON.parse(sessionStorage.getItem("user"));
