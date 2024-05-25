@@ -7,6 +7,7 @@ import Login from "../pages/Login.js";
 import ListaAcoes from "../pages/ListaAcoes.js";
 import Favoritas from "../pages/Favoritas.js";
 import ListaFIIs from "../pages/ListaFiis.js";
+import FavoritosFiis from "../pages/FiisFavoritos.js";
 
 export const PrivateRoute = () => {
     const isAuthenticated = authService.isAuthenticated();
@@ -26,6 +27,7 @@ function Rotas() {
                 <Route path="/listaAcoes" element={<ListaAcoes />} />
                 <Route path="/listaFiis" element={<ListaFIIs />} />
                 <Route path="/favoritas" element={<Favoritas />} />
+                <Route path="/favoritosFiis" element={<FavoritosFiis />} />
             </Route>
         </Routes>
     );

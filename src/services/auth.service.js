@@ -28,6 +28,8 @@ class AuthService {
     sessionStorage.removeItem("user");
     sessionStorage.removeItem("stateListaAcoes");
     sessionStorage.removeItem("stateListaFiis");
+    sessionStorage.removeItem("stateListaFavoritas");
+    sessionStorage.removeItem("stateListaFavoritosFiis");
   }
 
   async register(userData) {
@@ -86,6 +88,18 @@ class AuthService {
     } catch (error) {
       console.error("Error loading user layout for ListaFavoritas:", error);
       sessionStorage.removeItem("stateListaFavoritas");
+    }
+
+    try {
+      const layoutFiis = await UserLayoutService.getLayout("ListaFavoritosFiis");
+      if (layoutFiis) {
+        sessionStorage.setItem("stateListaFavoritosFiis", layoutFiis);
+      } else {
+        sessionStorage.removeItem("stateListaFavoritosFiis");
+      }
+    } catch (error) {
+      console.error("Error loading user layout for ListaFavoritas:", error);
+      sessionStorage.removeItem("stateListaFavoritosFiis");
     }
   }
 
