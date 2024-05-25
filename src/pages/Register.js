@@ -32,7 +32,7 @@ export default function Register() {
         email,
         name,
         user_name: user,
-        password
+        password,
       });
 
       if (response.status === 201) {
@@ -68,7 +68,11 @@ export default function Register() {
           alignItems: "center",
         }}
       >
-        <img src={Logo} style={{ width: "170px", height: "170px" }} alt="Logo" />
+        <img
+          src={Logo}
+          style={{ width: "170px", height: "170px" }}
+          alt="Logo"
+        />
 
         <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 3 }}>
           <Grid container spacing={2}>

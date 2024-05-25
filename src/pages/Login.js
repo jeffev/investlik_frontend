@@ -62,7 +62,7 @@ export default function Login() {
           alignItems: "center",
         }}
       >
-        <img src={Logo} style={{ width: "170px", height: "170px" }} />
+        <img src={Logo} style={{ width: "170px", height: "170px" }} alt="Investlink" />
 
         <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
           <TextField

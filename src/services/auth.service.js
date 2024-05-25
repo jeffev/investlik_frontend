@@ -6,7 +6,10 @@ const API_URL = "http://investlink-backend-1:5000/v1/";
 class AuthService {
   async login(user_name, password) {
     try {
-      const response = await axios.post(`${API_URL}user/login`, { user_name, password });
+      const response = await axios.post(`${API_URL}user/login`, {
+        user_name,
+        password,
+      });
       if (response.status === 200) {
         const { access_token, profile, name, user_name } = response.data;
         this.setUserSession({ profile, name, user_name, access_token });
@@ -16,7 +19,7 @@ class AuthService {
       }
       return response;
     } catch (error) {
-      console.error('Login error:', error);
+      console.error("Login error:", error);
       return error.response;
     }
   }
@@ -36,40 +39,55 @@ class AuthService {
       }
       return response;
     } catch (error) {
-      console.error('Registration error:', error);
+      console.error("Registration error:", error);
       return error.response;
     }
   }
 
   setUserSession({ profile, name, user_name, access_token }) {
-    sessionStorage.setItem("user", JSON.stringify({ profile, name, user_name, access_token }));
+    sessionStorage.setItem(
+      "user",
+      JSON.stringify({ profile, name, user_name, access_token })
+    );
   }
 
   async loadUserLayout() {
     try {
-        const layoutAcoes = await UserLayoutService.getLayout("ListaAcoes");
-        if (layoutAcoes) {
-            sessionStorage.setItem('stateListaAcoes', layoutAcoes);
-        } else {
-            sessionStorage.removeItem('stateListaAcoes');
-        }
+      const layoutAcoes = await UserLayoutService.getLayout("ListaAcoes");
+      if (layoutAcoes) {
+        sessionStorage.setItem("stateListaAcoes", layoutAcoes);
+      } else {
+        sessionStorage.removeItem("stateListaAcoes");
+      }
     } catch (error) {
-        console.error('Error loading user layout for ListaAcoes:', error);
-        sessionStorage.removeItem('stateListaAcoes');
+      console.error("Error loading user layout for ListaAcoes:", error);
+      sessionStorage.removeItem("stateListaAcoes");
     }
 
     try {
-        const layoutFiis = await UserLayoutService.getLayout("ListaFiis");
-        if (layoutFiis) {
-            sessionStorage.setItem('stateListaFiis', layoutFiis);
-        } else {
-            sessionStorage.removeItem('stateListaFiis');
-        }
+      const layoutFiis = await UserLayoutService.getLayout("ListaFiis");
+      if (layoutFiis) {
+        sessionStorage.setItem("stateListaFiis", layoutFiis);
+      } else {
+        sessionStorage.removeItem("stateListaFiis");
+      }
     } catch (error) {
-        console.error('Error loading user layout for ListaFiis:', error);
-        sessionStorage.removeItem('stateListaFiis');
+      console.error("Error loading user layout for ListaFiis:", error);
+      sessionStorage.removeItem("stateListaFiis");
     }
-}
+
+    try {
+      const layoutFiis = await UserLayoutService.getLayout("ListaFavoritas");
+      if (layoutFiis) {
+        sessionStorage.setItem("stateListaFavoritas", layoutFiis);
+      } else {
+        sessionStorage.removeItem("stateListaFavoritas");
+      }
+    } catch (error) {
+      console.error("Error loading user layout for ListaFavoritas:", error);
+      sessionStorage.removeItem("stateListaFavoritas");
+    }
+  }
 
   getCurrentUser() {
     const user = JSON.parse(sessionStorage.getItem("user"));

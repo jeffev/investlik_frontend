@@ -1,47 +1,155 @@
 import React, { useState, useEffect } from "react";
-import { MaterialReactTable, useMaterialReactTable } from "material-react-table";
-import { Backdrop, Box, Button, CircularProgress, IconButton, Tooltip, Snackbar } from "@mui/material";
+import {
+  MaterialReactTable,
+  useMaterialReactTable,
+} from "material-react-table";
+import {
+  Backdrop,
+  Box,
+  Button,
+  CircularProgress,
+  IconButton,
+  Tooltip,
+  Snackbar,
+} from "@mui/material";
 import { MRT_Localization_PT_BR } from "material-react-table/locales/pt-BR";
 import Star from "@mui/icons-material/Star";
 import StarBorder from "@mui/icons-material/StarBorder";
 import Download from "@mui/icons-material/Download";
 import Save from "@mui/icons-material/Save";
-import Alert from '@mui/material/Alert';
-import { mkConfig, generateCsv, download } from 'export-to-csv';
+import Alert from "@mui/material/Alert";
+import { mkConfig, generateCsv, download } from "export-to-csv";
 import { darken } from "@mui/material";
 import FIIService from "../services/fii.service";
 import AuthService from "../services/auth.service";
 import UserLayoutService from "../services/userLayout.service";
 
 const columns = [
-  { id: "ticker", accessorKey: "ticker", header: "Ticker", size: 80, filterVariant: 'autocomplete', enableColumnActions: false },
-  { accessorKey: "companyname", header: "Nome", size: 120, filterVariant: 'autocomplete', enableColumnActions: false },
-  { accessorKey: "sectorname", header: "Setor", size: 120, filterVariant: 'autocomplete', enableColumnActions: false },
-  { accessorKey: "subsectorname", header: "Subsetor", size: 120, filterVariant: 'autocomplete', enableColumnActions: false },
-  { accessorKey: "segment", header: "Segmento", size: 120, filterVariant: 'autocomplete', enableColumnActions: false },
+  {
+    id: "ticker",
+    accessorKey: "ticker",
+    header: "Ticker",
+    size: 80,
+    filterVariant: "autocomplete",
+    enableColumnActions: false,
+  },
+  {
+    accessorKey: "companyname",
+    header: "Nome",
+    size: 120,
+    filterVariant: "autocomplete",
+    enableColumnActions: false,
+  },
+  {
+    accessorKey: "sectorname",
+    header: "Setor",
+    size: 120,
+    filterVariant: "autocomplete",
+    enableColumnActions: false,
+  },
+  {
+    accessorKey: "subsectorname",
+    header: "Subsetor",
+    size: 120,
+    filterVariant: "autocomplete",
+    enableColumnActions: false,
+  },
+  {
+    accessorKey: "segment",
+    header: "Segmento",
+    size: 120,
+    filterVariant: "autocomplete",
+    enableColumnActions: false,
+  },
   {
     accessorKey: "price",
     header: "Preço",
     size: 120,
-    filterVariant: 'range',
+    filterVariant: "range",
     enableColumnActions: false,
     Cell: ({ cell }) =>
       cell.getValue()?.toLocaleString?.("pt-BR", {
         style: "currency",
-        currency: "BRL"
+        currency: "BRL",
       }),
   },
-  { accessorKey: "dy", header: "DY", size: 120, filterVariant: 'range', enableColumnActions: false },
-  { accessorKey: "p_vp", header: "P/VP", size: 120, filterVariant: 'range', enableColumnActions: false },
-  { accessorKey: "valorpatrimonialcota", header: "Valor Patrimonial Cota", size: 180, filterVariant: 'range', enableColumnActions: false },
-  { accessorKey: "liquidezmediadiaria", header: "Liquidez Média Diária", size: 180, filterVariant: 'range', enableColumnActions: false },
-  { accessorKey: "percentualcaixa", header: "% Caixa", size: 120, filterVariant: 'range', enableColumnActions: false },
-  { accessorKey: "dividend_cagr", header: "Dividend CAGR", size: 150, filterVariant: 'range', enableColumnActions: false },
-  { accessorKey: "cota_cagr", header: "Cota CAGR", size: 150, filterVariant: 'range', enableColumnActions: false },
-  { accessorKey: "numerocotistas", header: "Número Cotistas", size: 150, filterVariant: 'range', enableColumnActions: false },
-  { accessorKey: "numerocotas", header: "Número Cotas", size: 150, filterVariant: 'range', enableColumnActions: false },
-  { accessorKey: "patrimonio", header: "Patrimônio", size: 120, filterVariant: 'range', enableColumnActions: false },
-  { accessorKey: "lastdividend", header: "Último Dividendo", size: 150, filterVariant: 'range', enableColumnActions: false },
+  {
+    accessorKey: "dy",
+    header: "DY",
+    size: 120,
+    filterVariant: "range",
+    enableColumnActions: false,
+  },
+  {
+    accessorKey: "p_vp",
+    header: "P/VP",
+    size: 120,
+    filterVariant: "range",
+    enableColumnActions: false,
+  },
+  {
+    accessorKey: "valorpatrimonialcota",
+    header: "Valor Patrimonial Cota",
+    size: 180,
+    filterVariant: "range",
+    enableColumnActions: false,
+  },
+  {
+    accessorKey: "liquidezmediadiaria",
+    header: "Liquidez Média Diária",
+    size: 180,
+    filterVariant: "range",
+    enableColumnActions: false,
+  },
+  {
+    accessorKey: "percentualcaixa",
+    header: "% Caixa",
+    size: 120,
+    filterVariant: "range",
+    enableColumnActions: false,
+  },
+  {
+    accessorKey: "dividend_cagr",
+    header: "Dividend CAGR",
+    size: 150,
+    filterVariant: "range",
+    enableColumnActions: false,
+  },
+  {
+    accessorKey: "cota_cagr",
+    header: "Cota CAGR",
+    size: 150,
+    filterVariant: "range",
+    enableColumnActions: false,
+  },
+  {
+    accessorKey: "numerocotistas",
+    header: "Número Cotistas",
+    size: 150,
+    filterVariant: "range",
+    enableColumnActions: false,
+  },
+  {
+    accessorKey: "numerocotas",
+    header: "Número Cotas",
+    size: 150,
+    filterVariant: "range",
+    enableColumnActions: false,
+  },
+  {
+    accessorKey: "patrimonio",
+    header: "Patrimônio",
+    size: 120,
+    filterVariant: "range",
+    enableColumnActions: false,
+  },
+  {
+    accessorKey: "lastdividend",
+    header: "Último Dividendo",
+    size: 150,
+    filterVariant: "range",
+    enableColumnActions: false,
+  },
 ];
 
 const defaultColumnState = [
@@ -91,19 +199,25 @@ function ListaFIIs() {
         await FIIService.addFavorite(ticker);
       }
 
-      setLista(prevLista =>
-        prevLista.map(item =>
+      setLista((prevLista) =>
+        prevLista.map((item) =>
           item.ticker === ticker ? { ...item, favorita: !favorita } : item
         )
       );
 
       setLoading(false);
-      setSnackbar({ children: 'Favorita removida/adicionada com sucesso!', severity: 'success' });
+      setSnackbar({
+        children: "Favorita removida/adicionada com sucesso!",
+        severity: "success",
+      });
     } catch (error) {
       console.log(error);
 
       setLoading(false);
-      setSnackbar({ children: 'Erro ao remover/adicionar favorita!', severity: 'error' });
+      setSnackbar({
+        children: "Erro ao remover/adicionar favorita!",
+        severity: "error",
+      });
     }
   };
 
@@ -113,14 +227,20 @@ function ListaFIIs() {
     try {
       await FIIService.updateFIIs();
       setLoading(false);
-      
+
       const updatedFIIs = await FIIService.getAllFIIs();
       setLista(updatedFIIs);
-      setSnackbar({ children: 'Fiis atualizados com sucesso!', severity: 'success' });
+      setSnackbar({
+        children: "Fiis atualizados com sucesso!",
+        severity: "success",
+      });
     } catch (error) {
       console.error("Error updating FIIs:", error);
       setLoading(false);
-      setSnackbar({ children: 'Erro ao atualizar os Fiss!', severity: 'error' });
+      setSnackbar({
+        children: "Erro ao atualizar os Fiss!",
+        severity: "error",
+      });
     }
   };
 
@@ -129,13 +249,16 @@ function ListaFIIs() {
 
     try {
       await UserLayoutService.saveLayout("ListaFiis", state);
-      
+
       setLoading(false);
-      setSnackbar({ children: 'Layout salvo com sucesso!', severity: 'success' });
+      setSnackbar({
+        children: "Layout salvo com sucesso!",
+        severity: "success",
+      });
     } catch (error) {
-      console.error('Erro ao salvar o layout:', error);
+      console.error("Erro ao salvar o layout:", error);
       setLoading(false);
-      setSnackbar({ children: 'Erro ao salvar layout!', severity: 'error' });
+      setSnackbar({ children: "Erro ao salvar layout!", severity: "error" });
     }
   };
 
@@ -161,7 +284,7 @@ function ListaFIIs() {
     }
 
     if (Object.keys(tableState).length > 0) {
-      sessionStorage.setItem('stateListaFiis', JSON.stringify(tableState));
+      sessionStorage.setItem("stateListaFiis", JSON.stringify(tableState));
       handleSaveLayout(JSON.stringify(tableState));
     }
   };
@@ -173,18 +296,18 @@ function ListaFIIs() {
     enableColumnOrdering: true,
     enableColumnResizing: true,
     enableRowActions: true,
-    columnFilterDisplayMode: 'popover',
-    layoutMode: 'grid',
-    displayColumnDefOptions:{
-        'mrt-row-actions': {
-          size: 40,
-          grow: false,
-        },
+    columnFilterDisplayMode: "popover",
+    layoutMode: "grid",
+    displayColumnDefOptions: {
+      "mrt-row-actions": {
+        size: 40,
+        grow: false,
       },
-    initialState: JSON.parse(sessionStorage.getItem('stateListaFiis')) || {
-      density: 'compact',
-      pagination: { 
-          pageSize: 15 
+    },
+    initialState: JSON.parse(sessionStorage.getItem("stateListaFiis")) || {
+      density: "compact",
+      pagination: {
+        pageSize: 15,
       },
       defaultColumnState,
       columnVisibility: {
@@ -195,110 +318,115 @@ function ListaFIIs() {
         cota_cagr: false,
         numerocotistas: false,
         numerocotas: false,
-        patrimonio: false
-      }      
+        patrimonio: false,
+        percentualcaixa: false,
+      },
     },
-    renderRowActions:({ row }) => (
-        <Box sx={{ display: "flex", flexWrap: "nowrap", gap: "8px" }}>
-          <IconButton
-            color="secondary"
-  
-            onClick={() => {
-              handleFavoritar(row.original.favorita, row.original.ticker);
-            }}
-          >
-            {row.original.favorita ? <Tooltip title="Remover favorita"><Star /></Tooltip> : <Tooltip title="Adicionar favorita"><StarBorder /></Tooltip>}
-          </IconButton>
-        </Box>
-      ),
+    renderRowActions: ({ row }) => (
+      <Box sx={{ display: "flex", flexWrap: "nowrap", gap: "8px" }}>
+        <IconButton
+          color="secondary"
+          onClick={() => {
+            handleFavoritar(row.original.favorita, row.original.ticker);
+          }}
+        >
+          {row.original.favorita ? (
+            <Tooltip title="Remover favorita">
+              <Star />
+            </Tooltip>
+          ) : (
+            <Tooltip title="Adicionar favorita">
+              <StarBorder />
+            </Tooltip>
+          )}
+        </IconButton>
+      </Box>
+    ),
     localization: MRT_Localization_PT_BR,
     renderTopToolbarCustomActions: () => (
-      <Box
-        sx={{ display: "flex", gap: "1rem", p: "0.5rem", flexWrap: "wrap" }}
+      <Box sx={{ display: "flex", gap: "1rem", p: "0.5rem", flexWrap: "wrap" }}>
+        <Button
+          color="primary"
+          onClick={handleExportData}
+          startIcon={<Download />}
+          variant="contained"
         >
+          Exportar
+        </Button>
+        <Button
+          color="primary"
+          onClick={saveColumnStateToSessionStorage}
+          startIcon={<Save />}
+          variant="contained"
+        >
+          Salvar layout
+        </Button>
+        {isAdmin && (
           <Button
-            color="primary"
-            onClick={handleExportData}
-            startIcon={<Download />}
+            color="secondary"
+            onClick={handleUpdateFIIs}
             variant="contained"
           >
-            Exportar
+            Atualizar FIIs
           </Button>
-          <Button
-            color="primary"
-            onClick={saveColumnStateToSessionStorage}
-            startIcon={<Save />}
-            variant="contained"
-          >
-            Salvar layout
-          </Button>
-          {isAdmin && (
-            <Button
-              color="secondary"
-              onClick={handleUpdateFIIs}
-              variant="contained"
-            >
-              Atualizar FIIs
-            </Button>
-          )}
-        </Box>
-      ),
-      muiTablePaperProps: {
-        elevation: 0,
-        sx: {
-          borderRadius: "0",
-        },
-      },
-      muiTableBodyProps: {
-        sx: (theme) => ({
-          "& tr:nth-of-type(odd)": {
-            backgroundColor: darken(theme.palette.background.default, 0.1),
-          },
-        }),
-      },
-    });
-  
-    useEffect(() => {
-      const fetchData = async () => {
-        setLoading(true);
-        try {
-          const data = await FIIService.getAllFIIs();
-          setLista(data);
-  
-          setLoading(false);
-        } catch (error) {
-          console.log(error);
-          setLoading(false);
-        }
-      };
-  
-      fetchData();
-    }, []);
-  
-    return (
-      <div>
-        <Backdrop
-          sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
-          open={loading}
-        >
-          <CircularProgress color="secondary" />
-        </Backdrop>
-  
-        <MaterialReactTable table={table} />
-
-        {!!snackbar && (
-            <Snackbar
-                open
-                anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
-                onClose={handleCloseSnackbar}
-                autoHideDuration={6000}
-            >
-                <Alert {...snackbar} onClose={handleCloseSnackbar} />
-            </Snackbar>
         )}
-      </div>
-    );
-  }
-  
-  export default ListaFIIs;
-  
+      </Box>
+    ),
+    muiTablePaperProps: {
+      elevation: 0,
+      sx: {
+        borderRadius: "0",
+      },
+    },
+    muiTableBodyProps: {
+      sx: (theme) => ({
+        "& tr:nth-of-type(odd)": {
+          backgroundColor: darken(theme.palette.background.default, 0.1),
+        },
+      }),
+    },
+  });
+
+  useEffect(() => {
+    const fetchData = async () => {
+      setLoading(true);
+      try {
+        const data = await FIIService.getAllFIIs();
+        setLista(data);
+
+        setLoading(false);
+      } catch (error) {
+        console.log(error);
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  return (
+    <div>
+      <Backdrop
+        sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+        open={loading}
+      >
+        <CircularProgress color="secondary" />
+      </Backdrop>
+
+      <MaterialReactTable table={table} />
+
+      {!!snackbar && (
+        <Snackbar
+          open
+          anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+          onClose={handleCloseSnackbar}
+          autoHideDuration={6000}
+        >
+          <Alert {...snackbar} onClose={handleCloseSnackbar} />
+        </Snackbar>
+      )}
+    </div>
+  );
+}
+
+export default ListaFIIs;
