@@ -282,6 +282,27 @@ const columns = [
       </Box>
     ),
   },
+  {
+    accessorKey: "roic_rank",
+    header: "Rank roic",
+    size: 120,
+    filterVariant: "range",
+    enableColumnActions: false,
+  },
+  {
+    accessorKey: "ey_rank",
+    header: "Earnings rank",
+    size: 120,
+    filterVariant: "range",
+    enableColumnActions: false,
+  },
+  {
+    accessorKey: "magic_formula_rank",
+    header: "Rank fórmula mágica",
+    size: 120,
+    filterVariant: "range",
+    enableColumnActions: false,
+  },
 ];
 
 const defaultColumnState = [
@@ -461,6 +482,8 @@ function ListaAcoes() {
         segmentname: false,
         sectorname: false,
         graham_formula: false,
+        roic_rank: false,
+        ey_rank: false
       },
     },
     renderRowActions: ({ row }) => (

@@ -449,6 +449,30 @@ const Favoritas = () => {
         </Box>
       ),
     },
+    {
+      accessorKey: "stock.roic_rank",
+      header: "Rank roic",
+      size: 80,
+      Edit: () => null,
+      filterVariant: "range",
+      enableColumnActions: false,
+    },
+    {
+      accessorKey: "stock.ey_rank",
+      header: "Earnings rank",
+      size: 80,
+      Edit: () => null,
+      filterVariant: "range",
+      enableColumnActions: false,
+    },
+    {
+      accessorKey: "stock.magic_formula_rank",
+      header: "Rank fórmula mágica",
+      size: 90,
+      Edit: () => null,
+      filterVariant: "range",
+      enableColumnActions: false,
+    },
   ];
 
   const handleSaveLayout = async (state) => {
@@ -560,6 +584,8 @@ const Favoritas = () => {
         "stock.peg_ratio": false,
         "stock.receitas_cagr5": false,
         "stock.valormercado": false,
+        "stock.roic_rank ": false,
+        "stock.ey_rank": false,
       },
     },
     renderTopToolbarCustomActions: () => (

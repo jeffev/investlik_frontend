@@ -85,10 +85,6 @@ function BarraNavegacao({ check, change }) {
               <ListItemText primary="FIIs favoritos" />
             </ListItemButton>
             <Divider />
-            <ListItemButton component={Link} to={"/top10"}>
-              <ListItemIcon><HomeOutlined /></ListItemIcon>
-              <ListItemText primary="Top 10" />
-            </ListItemButton>
             <ListItemButton component={Link} to={"/sentimento"}>
               <ListItemIcon><HomeOutlined /></ListItemIcon>
               <ListItemText primary="Sentimento de mercado" />
@@ -97,10 +93,6 @@ function BarraNavegacao({ check, change }) {
             <ListItemButton component={Link} to={"/minhaCarteira"}>
               <ListItemIcon><HomeOutlined /></ListItemIcon>
               <ListItemText primary="Minha carteira" />
-            </ListItemButton>
-            <ListItemButton component={Link} to={"/minhasOpcoes"}>
-              <ListItemIcon><HomeOutlined /></ListItemIcon>
-              <ListItemText primary="Minhas opções" />
             </ListItemButton>
           </List>
         </div>
