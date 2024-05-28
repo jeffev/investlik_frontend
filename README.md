@@ -6,7 +6,7 @@ Welcome to the frontend repository of InvestLink, a stock management application
 
 1. **Clone the repository:**
    ```sh
-   git clone https://github.com/jeffev/investlik_frontend
+   git clone https://github.com/jeffev/investlink_frontend
    cd investlink-frontend
    ```
 
